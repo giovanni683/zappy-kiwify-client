@@ -25,8 +25,29 @@ export default function HomePage() {
       
       <div className="p-4">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Notificações</h2>
-          <p className="text-gray-600 text-sm">
+          <h2
+            style={{
+              color: '#000',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '24px',
+              fontStyle: 'normal',
+              fontWeight: 700,
+              lineHeight: 'normal',
+            }}
+            className="mb-2"
+          >
+            Notificações
+          </h2>
+          <p
+            style={{
+              color: 'rgba(0, 0, 0, 0.70)',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+            }}
+          >
             Gerencie aqui as notificações disparadas a partir dos eventos da Kiwify.
           </p>
         </div>

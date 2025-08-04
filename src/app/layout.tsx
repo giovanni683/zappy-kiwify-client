@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Zappy & Kiwify - Painel de Notificações',
+  title: 'ZappyKiwify - Painel de Notificações',
   description: 'Gerencie notificações automatizadas entre Kiwify e Zappy',
 };
 
@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
-        <div className="max-w-[420px] mx-auto">
+        <div className="page-container">
           {children}
         </div>
       </body>

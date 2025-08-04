@@ -1,43 +1,23 @@
-"use client";
-
-import { useEffect, useState } from 'react';
 import { ArrowLeft, Edit } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Header } from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/status-badge';
-import useNotificationStore from '@/lib/notification-store';
-import { mockEvents, mockConnections, mockSectors } from '@/lib/mock-data';
-import { Notification } from '@/types/notification';
+import { mockEvents, mockConnections, mockSectors, mockNotifications } from '@/lib/mock-data';
+import { notFound } from 'next/navigation';
 
-export default function DetalhesNotificacaoPage() {
-  const params = useParams();
-  const router = useRouter();
-  const { getNotificationById } = useNotificationStore();
-  const [notification, setNotification] = useState<Notification | null>(null);
+export async function generateStaticParams() {
+  return mockNotifications.map((notification) => ({
+    id: notification.id,
+  }));
+}
 
-  useEffect(() => {
-    if (params.id) {
-      const found = getNotificationById(params.id as string);
-      if (found) {
-        setNotification(found);
-      } else {
-        router.push('/');
-      }
-    }
-  }, [params.id, getNotificationById, router]);
+export default function DetalhesNotificacaoPage({ params }: { params: { id: string } }) {
+  const notification = mockNotifications.find(n => n.id === params.id);
 
   if (!notification) {
-    return (
-      <div className="max-w-[420px] mx-auto bg-gray-50 min-h-screen">
-        <Header />
-        <div className="p-4 text-center">
-          <p>Carregando...</p>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const event = mockEvents.find(e => e.id === notification.event);

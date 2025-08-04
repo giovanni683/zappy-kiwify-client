@@ -70,6 +70,18 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+  .page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 420px;
+  padding-bottom: 11px;
+  background: #F9FAFB;
+  min-height: 100vh;
+  margin-left: auto;
+  margin-right: auto;
+}
 }
 
 @layer base {
@@ -77,6 +89,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    background: #444444; /* deixa as laterais pretas */
+    color: var(--foreground);
   }
 }
