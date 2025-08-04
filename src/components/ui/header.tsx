@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import React from 'react';
+import zappylogo from '../../public/logokiwify.svg.svg';
 
 export function Header() {
   return (
@@ -16,20 +18,11 @@ export function Header() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <img
-          src="/zappy.png" 
+        <Image
+          src={zappylogo} 
           alt="Zappy"
-          style={{ height: 32, width: 32, objectFit: 'contain', marginRight: 8 }}
+          width={200}
         />
-        <span style={{ color: '#fff', fontSize: 24, fontWeight: 400, fontFamily: 'Inter, sans-serif', marginRight: 8 }}>
-          Zappy
-        </span>
-        <span style={{ color: '#A7F3D0', fontSize: 24, fontWeight: 700, margin: '0 8px', fontFamily: 'Inter, sans-serif' }}>
-          &
-        </span>
-        <span style={{ color: '#fff', fontSize: 24, fontWeight: 700, fontFamily: 'Inter, sans-serif' }}>
-          Kiwify
-        </span>
       </div>
     </div>
   );

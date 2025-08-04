@@ -5,10 +5,12 @@ import { Notification } from '@/types/notification';
 
 interface NotificationsListProps {
   notifications: Notification[];
+  onNotificationClick?: (id: string) => void;
+  onNotificationEdit?: (id: string) => void;
 }
 
-export function NotificationsList({ notifications }: NotificationsListProps) {
-  if (notifications.length === 0) {
+export function NotificationsList({ notifications, onNotificationClick, onNotificationEdit }: NotificationsListProps) {
+  if (!notifications || notifications.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
         Nenhuma notificação encontrada.
@@ -22,6 +24,8 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
         <NotificationCardClient
           key={notification.id}
           notification={notification}
+          onClick={() => onNotificationClick?.(notification.id)}
+          onEdit={() => onNotificationEdit?.(notification.id)}
         />
       ))}
     </div>

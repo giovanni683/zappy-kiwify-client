@@ -1,30 +1,32 @@
 "use client";
 
-import { Edit } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Notification } from '@/types/notification';
-import Link from 'next/link';
 
 interface NotificationCardClientProps {
   notification: Notification;
+  onClick?: () => void;
+  onEdit?: () => void;
 }
 
-export function NotificationCardClient({ notification }: NotificationCardClientProps) {
+export function NotificationCardClient({ notification, onClick, onEdit }: NotificationCardClientProps) {
   return (
-    <Card className="p-4 mb-3 bg-white border border-gray-200">
+    <Card
+      className="p-4 mb-3 bg-white border border-gray-200 cursor-pointer hover:shadow"
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <h3 className="font-medium text-gray-900 mb-2">{notification.name}</h3>
           <StatusBadge isActive={notification.isActive} />
         </div>
-        <Link href={`/detalhes-da-notificacao/${notification.id}`}>
-          <Button variant="outline" size="sm" className="ml-4">
-            <Edit className="w-4 h-4 mr-1" />
-            Editar
-          </Button>
-        </Link>
+        <button
+          className="ml-4 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-sm"
+          onClick={e => { e.stopPropagation(); onEdit && onEdit(); }}
+        >
+          Editar
+        </button>
       </div>
     </Card>
   );
