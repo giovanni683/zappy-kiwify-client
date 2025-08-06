@@ -54,11 +54,6 @@ export default function HomePage() {
     <div className="max-w-[420px] mx-auto bg-gray-50 min-h-screen">
       <Header />
       <div className="p-4">
-        <div className="flex justify-end mb-4">
-          <Button onClick={handleNova} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
-            <Plus className="w-4 h-4" /> Nova notificação
-          </Button>
-        </div>
         <div className="mb-6">
           <h2 style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: '24px', fontWeight: 700, lineHeight: 'normal' }} className="mb-2">
             Notificações
@@ -67,13 +62,18 @@ export default function HomePage() {
             Gerencie aqui as notificações disparadas a partir dos eventos da Kiwify.
           </p>
         </div>
-        <div className="mb-6">
+        <div className="mb-2">
           <FilterControls
             searchTerm={searchTerm}
             filterStatus={filterStatus}
             onSearchChange={setSearchTerm}
             onFilterChange={setFilterStatus}
           />
+        </div>
+        <div className="flex justify-end mb-6">
+          <Button onClick={handleNova} className="bg-[#0B4D33] hover:bg-[#166c4e] text-white font-bold px-5 py-2 rounded-full">
+            + Notificação
+          </Button>
         </div>
         <div className="mb-6">
           <NotificationsList

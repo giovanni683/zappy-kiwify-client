@@ -70,93 +70,110 @@ export function NewNotification({ onBack }: NewNotificationProps) {
   }
 
   return (
-    <div className="max-w-[420px] mx-auto bg-gray-50 min-h-screen flex flex-col justify-center">
-      <div className="flex flex-col justify-center items-end gap-[22px] w-full bg-white rounded-2xl shadow-none mt-8 mb-8 p-4 min-h-[600px]">
-        {/* Botão Voltar */}
-        <div className="flex items-center mb-6 w-full">
-          <button
-            onClick={onBack}
-            className="flex items-center px-4 py-2 bg-[#E1E9E7] rounded-full text-[#0B4D33] font-medium text-base mr-3"
-          >
-            <span className="mr-2">←</span> Voltar
-          </button>
-          <h2 className="text-2xl font-bold text-gray-900 ml-2">Nova notificação</h2>
-        </div>
+    <div
+      className="page-container"
+      style={{
+        fontFamily: 'Inter, sans-serif',
+        width: 420,
+        minHeight: 992,
+        background: '#F9FAFB',
+        border: '1px solid #ccc',
+        margin: '20px auto',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative',
+      }}
+    >
+      {/* Botão Voltar fixo no topo */}
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1 px-4 py-2 bg-[#DCFCE7] rounded-full text-[#0B4D33] font-semibold text-[14px] leading-[17px] border-none shadow-none"
+        style={{ width: 90, height: 33, position: 'absolute', left: 16, top: 20, zIndex: 10 }}
+      >
+        <span className="mr-1" style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>←</span>
+        <span style={{ fontWeight: 600, fontSize: 14, lineHeight: '17px', color: '#0B4D33' }}>Voltar</span>
+      </button>
+      {/* Conteúdo principal centralizado */}
+      <div
+        className="flex flex-col items-start gap-4 bg-white rounded-2xl shadow-none p-0 min-h-[600px]"
+        style={{
+          marginTop: 70,
+          width: 388,
+          padding: 0,
+          background: 'transparent',
+          boxShadow: 'none',
+        }}
+      >
+        {/* Título logo abaixo do botão voltar */}
+        <h2 className="font-bold text-black" style={{ fontSize: 20, lineHeight: '24px', fontFamily: 'Inter, sans-serif', fontWeight: 700, marginTop: 0, marginLeft: 0 }}>Nova notificação</h2>
 
         {/* Card de informação */}
-        <div className="flex items-start gap-3 w-full bg-[#FFF8E1] rounded-2xl p-4 mb-2">
-          <Info className="w-6 h-6 text-[#000] mt-1" />
-          <div>
-            <span className="font-bold text-base text-black block mb-1">Importante</span>
-            <span className="text-sm text-black">
-              Para a notificação funcione corretamente, é essencial que o cliente tenha um número de telefone com DDI + DDD cadastrado (ex: +55 11 9999-9999) e que você possua o número ativo e conectado na sua conta Zappy.
+        <div className="flex items-start gap-3 w-full rounded-[20px] p-[10px] mb-2" style={{ background: 'rgba(255, 194, 25, 0.2)', height: 131 }}>
+          <Info className="w-6 h-6 text-black flex-shrink-0" />
+          <div className="flex flex-col gap-[7px] flex-grow">
+            <span className="font-semibold text-black" style={{ fontSize: 16, lineHeight: '19px', height: 19 }}>Importante</span>
+            <span style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', height: 85, display: 'block' }}>
+              Para que a notificação funcione corretamente, é essencial que o cliente tenha um número de telefone com DDI + DDD cadastrado (ex: +55 11 99999-9999) e que você possua o número ativo e conectado na sua conta Zappy.
             </span>
           </div>
         </div>
 
         {/* Formulário (exemplo visual, substitua pelos campos reais depois) */}
-        <form className="flex flex-col gap-4 w-full">
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-base text-black">Evento <span className="text-red-500">*</span></label>
-            <select className="h-11 px-4 rounded-2xl border border-black/20 bg-white text-base">
+        <form className="flex flex-col gap-4 w-full" style={{ marginTop: 8, position: 'static' }}>
+          <div className="flex flex-col gap-[5px] w-full">
+            <label className="form-label" style={{ fontWeight: 600, fontSize: 14, lineHeight: '17px', color: '#000' }}>Evento <span className="text-red-500">*</span></label>
+            <select className="select-box" style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.2)', height: 44, padding: 10 }}>
               <option>Selecione um evento</option>
             </select>
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-base text-black">Conexão</label>
-            <select className="h-11 px-4 rounded-2xl border border-black/20 bg-white text-base">
+          <div className="flex flex-col gap-[5px] w-full">
+            <label className="form-label" style={{ fontWeight: 600, fontSize: 14, lineHeight: '17px', color: '#000' }}>Conexão</label>
+            <select className="select-box" style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.2)', height: 44, padding: 10 }}>
               <option>Usar padrão da zappy</option>
             </select>
-            <span
-              style={{
-                fontFamily: 'Inter',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                fontSize: 20,
-                lineHeight: '24px',
-                color: '#444',
-                display: 'block',
-                marginTop: 2,
-              }}
-            >
-              Se não selecionar, a conexão padrão será usada.
-            </span>
+            <span className="form-description" style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)' }}>Se não selecionar, a conexão padrão será usada.</span>
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-base text-black">Setor de atendimento</label>
-            <select className="h-11 px-4 rounded-2xl border border-black/20 bg-white text-base">
+          <div className="flex flex-col gap-[5px] w-full">
+            <label className="form-label" style={{ fontWeight: 600, fontSize: 14, lineHeight: '17px', color: '#000' }}>Setor de atendimento</label>
+            <select className="select-box" style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.2)', height: 44, padding: 10 }}>
               <option>Não transferir</option>
             </select>
-            <span className="text-xs text-black/70">O atendimento será transferido para este setor.</span>
+            <span className="form-description" style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)' }}>O atendimento será transferido para este setor.</span>
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-base text-black">Mensagem</label>
+          <div className="flex flex-col gap-[5px] w-full">
+            <label className="form-label" style={{ fontWeight: 600, fontSize: 14, lineHeight: '17px', color: '#000' }}>Mensagem</label>
             <textarea
               ref={messageRef}
-              className="h-24 px-4 py-2 rounded-2xl border border-black/20 bg-white text-base resize-none"
+              className="message-area resize-none"
               placeholder="Escreva sua mensagem..."
               value={message}
               onChange={e => setMessage(e.target.value)}
-              style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: 16, lineHeight: '24px', color: '#000' }}
+              style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.2)', height: 114, padding: 10, fontFamily: 'Inter, sans-serif' }}
             ></textarea>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {variables.map((v) => (
-              <button
-                type="button"
-                key={v.value}
-                className="rounded-full bg-[#E1E9E7] text-[#0B4D33] px-4 py-2 text-sm font-medium hover:bg-[#d2e0db] transition-colors"
-                onClick={() => handleInsertVariable(v.value)}
-              >
-                {v.label}
-              </button>
-            ))}
+          <div className="variables-section w-full flex flex-col gap-2">
+            <span className="variables-label" style={{ fontWeight: 500, fontSize: 14, color: '#000' }}>Inserir variáveis:</span>
+            <div className="variables-grid flex flex-wrap gap-2">
+              {variables.map((v) => (
+                <button
+                  type="button"
+                  key={v.value}
+                  className="variable-chip px-4 py-2 font-medium hover:bg-[#d2e0db] transition-colors"
+                  style={{ background: 'rgba(11, 77, 51, 0.1)', borderRadius: 100, fontWeight: 500, fontSize: 14, lineHeight: '17px', color: '#0B4D33', height: 37, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}
+                  onClick={() => handleInsertVariable(v.value)}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center gap-2 mt-2">
-            <span className="font-medium text-base text-black">Ativar notificação</span>
+          <div className="toggle-group flex flex-row items-center gap-2 mt-2" style={{ height: 19 }}>
+            <span className="toggle-label" style={{ fontWeight: 600, fontSize: 16, lineHeight: '19px', color: '#000' }}>Ativar notificação</span>
             <input type="checkbox" className="w-6 h-6 rounded-full border border-black/20 accent-[#0B4D33]" />
           </div>
-          <Button type="submit" className="w-full h-12 rounded-full bg-[#0B4D33] text-white text-lg font-bold mt-4">Salvar</Button>
+          <Button type="submit" className="save-button w-[262px] h-[48px] rounded-full bg-[#0B4D33] text-white font-semibold text-[16px] leading-[19px] mx-auto mt-8 flex items-center justify-center" style={{ fontWeight: 600, fontSize: 16, lineHeight: '19px', color: '#fff', position: 'static' }}>Salvar</Button>
         </form>
       </div>
     </div>

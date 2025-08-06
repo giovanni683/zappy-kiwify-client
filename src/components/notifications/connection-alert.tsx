@@ -1,32 +1,37 @@
-import { AlertTriangle, Zap } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ConnectionAlertProps {
   type: 'warning' | 'no-connection';
 }
 
 export function ConnectionAlert({ type }: ConnectionAlertProps) {
-  if (type === 'warning') {
-    return (
-      <Alert className="bg-yellow-50 border-yellow-200 mb-6">
-        <AlertTriangle className="h-4 w-4 text-yellow-600" />
-        <AlertDescription className="text-yellow-800">
-          <strong>Importante</strong>
-          <br />
-          Para a notificação funcione corretamente, é essencial que o cliente tenha um número de telefone com DDI + DDD cadastrado (ex: +55 11 9999-9999) e que você possua o número ativo e conectado na sua conta Zappy.
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
+  // Padronização visual conforme NewNotification
+  const baseStyle = {
+    width: 388,
+    margin: '0 auto',
+    background: 'rgba(255, 194, 25, 0.2)',
+    borderRadius: 20,
+    padding: 10,
+    minHeight: 90,
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginBottom: 24,
+  };
   return (
-    <Alert className="bg-yellow-50 border-yellow-200 mb-6">
-      <Zap className="h-4 w-4 text-yellow-600" />
-      <AlertDescription className="text-yellow-800">
-        <strong>Sem conexão Zappy!</strong>
-        <br />
-        Conecte um número na Zappy para poder selecionar uma conexão e enviar notificações.
-      </AlertDescription>
-    </Alert>
+    <div style={baseStyle}>
+      <div style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: '#FFC219' }}>
+        {type === 'warning' ? '⚠️' : '⚡'}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 7, flexGrow: 1 }}>
+        <span style={{ fontWeight: 600, fontSize: 16, lineHeight: '19px', color: '#000', height: 19 }}>
+          {type === 'warning' ? 'Importante' : 'Sem conexão Zappy!'}
+        </span>
+        <span style={{ fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', display: 'block' }}>
+          {type === 'warning'
+            ? 'Para que a notificação funcione corretamente, é essencial que o cliente tenha um número de telefone com DDI + DDD cadastrado (ex: +55 11 99999-9999) e que você possua o número ativo e conectado na sua conta Zappy.'
+            : 'Conecte um número na Zappy para poder selecionar uma conexão e enviar notificações.'}
+        </span>
+      </div>
+    </div>
   );
 }
