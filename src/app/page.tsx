@@ -71,8 +71,19 @@ export default function HomePage() {
           />
         </div>
         <div className="flex justify-end mb-6">
-          <Button onClick={handleNova} className="bg-[#0B4D33] hover:bg-[#166c4e] text-white font-bold px-5 py-2 rounded-full">
-            + Notificação
+          <Button
+            onClick={handleNova}
+            className="bg-[#0B4D33] hover:bg-[#166c4e] text-white font-bold px-5 py-2 rounded-full mt-4"
+            style={{ width: 140 }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ display: 'flex', alignItems: 'center' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12H19M12 5V19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <span>Notificação</span>
+            </span>
           </Button>
         </div>
         <div className="mb-6">

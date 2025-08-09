@@ -71,14 +71,16 @@
     --chart-5: 340 75% 55%;
   }
   .page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  width: 420px;
-  padding-bottom: 11px;
-  background: #F9FAFB;
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 420px;
+    padding-bottom: 11px;
+    background: #F9FAFB;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
   margin-left: auto;
   margin-right: auto;
 }
@@ -89,7 +91,7 @@
     @apply border-border;
   }
   body {
-    background: #444444; /* deixa as laterais pretas */
+  background: #E5E7EB; /* cinza claro padrão Tailwind */
     color: var(--foreground);
   }
 }

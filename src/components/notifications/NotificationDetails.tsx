@@ -18,74 +18,74 @@ export function NotificationDetails({ notificationId, onBack, onEdit }: Notifica
   const sector = mockSectors.find(s => s.id === notification.sector);
 
   return (
-    <div
-      className="page-container"
-      style={{
-        fontFamily: 'Inter, sans-serif',
-        width: 420,
-        minHeight: 992,
-        background: '#F9FAFB',
-        border: '1px solid #ccc',
-        margin: '20px auto',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative',
-      }}
-    >
-      {/* Botão Voltar fixo no topo */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-1 px-4 py-2 bg-[#DCFCE7] rounded-full text-[#0B4D33] font-semibold text-[14px] leading-[17px] border-none shadow-none"
-        style={{ width: 90, height: 33, position: 'absolute', left: 16, top: 20, zIndex: 10 }}
-      >
-        <span className="mr-1" style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ArrowLeft className="w-5 h-5" /></span>
-        <span style={{ fontWeight: 600, fontSize: 14, lineHeight: '17px', color: '#0B4D33' }}>Voltar</span>
-      </button>
-      {/* Conteúdo principal centralizado */}
-      <div
-        className="flex flex-col items-start gap-4 bg-white rounded-2xl shadow-none p-0 min-h-[600px]"
-        style={{
-          marginTop: 70,
-          width: 388,
-          padding: 0,
-          background: 'transparent',
-          boxShadow: 'none',
-        }}
-      >
-        {/* Título logo abaixo do botão voltar */}
-        <h2 className="font-bold text-black" style={{ fontSize: 20, lineHeight: '24px', fontFamily: 'Inter, sans-serif', fontWeight: 700, marginTop: 0, marginLeft: 0 }}>Detalhes da notificação</h2>
-        {/* Card de detalhes */}
-        <div className="flex flex-col gap-4 w-full rounded-[20px] p-[18px] mb-2" style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', minHeight: 300 }}>
-          <div>
-            <span className="block font-semibold text-black mb-1" style={{ fontSize: 14 }}>Status</span>
-            <div className="w-full p-3 bg-gray-100 rounded-lg flex justify-center">
-              <StatusBadge isActive={notification.isActive} />
+    <div className="relative w-[420px] h-[921px] mx-auto bg-[#F9FAFB]">
+      {/* Header com botão voltar */}
+      <div className="absolute left-4 top-5">
+        <button onClick={onBack} className="flex items-center justify-center gap-[5px] px-[10px] py-[10px] w-[90px] h-[33px] bg-[#DCFCE7] rounded-full">
+          <ArrowLeft className="w-6 h-6 text-[#0B4D33]" strokeWidth={2} />
+          <span className="font-inter font-semibold text-sm leading-[17px] text-[#0B4D33]">Voltar</span>
+        </button>
+      </div>
+
+      {/* Título */}
+      <div className="absolute left-4 top-[79px] w-[388px]">
+        <h1 className="font-inter font-bold text-xl leading-6 text-black">Detalhes da notificação</h1>
+      </div>
+
+      {/* Card Principal */}
+      <div className="absolute left-4 top-[118px] w-[388px] h-[390px] border border-black/10 rounded-[20px] bg-white">
+        <div className="flex flex-col items-start p-[10px] gap-[10px] w-full h-full">
+          <div className="flex flex-col items-start gap-[15px] w-[368px] h-[370px]">
+            {/* Seção Status */}
+            <div className="flex flex-col items-start gap-2 w-[368px] h-[63px]">
+              <div className="font-inter font-medium text-base leading-[19px] text-black/70 w-full">Status</div>
+              <div className="flex items-center justify-center w-[368px] h-[36px] bg-[#E1E9E7] rounded-full" style={{margin: 0, padding: 0}}>
+                <StatusBadge isActive={notification.isActive} />
+              </div>
             </div>
-          </div>
-          <div>
-            <span className="block font-semibold text-black mb-1" style={{ fontSize: 14 }}>Evento gatilho</span>
-            <span className="text-black" style={{ fontSize: 14 }}>{event?.name || notification.event}</span>
-          </div>
-          <div>
-            <span className="block font-semibold text-black mb-1" style={{ fontSize: 14 }}>Conexão</span>
-            <span className="text-black" style={{ fontSize: 14 }}>{connection?.name || notification.connection}</span>
-          </div>
-          <div>
-            <span className="block font-semibold text-black mb-1" style={{ fontSize: 14 }}>Setor de destino</span>
-            <span className="text-black" style={{ fontSize: 14 }}>{sector?.name || notification.sector}</span>
-          </div>
-          <div>
-            <span className="block font-semibold text-black mb-1" style={{ fontSize: 14 }}>Mensagem</span>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="text-black whitespace-pre-wrap" style={{ fontSize: 14 }}>{notification.message}</span>
+
+            {/* Evento gatilho */}
+            <div className="flex flex-col items-start gap-2 w-[368px] h-[51px]">
+              <div className="font-inter font-medium text-base leading-[19px] text-black/70 w-full">Evento gatilho</div>
+              <div className="font-inter font-medium text-base leading-6 text-center text-black">{event?.name || notification.event}</div>
+            </div>
+
+            {/* Conexão */}
+            <div className="flex flex-col items-start gap-2 w-[205px] h-[51px]">
+              <div className="font-inter font-medium text-base leading-[19px] text-black/70 w-full">Conexão</div>
+              <div className="font-inter font-medium text-base leading-6 text-center text-black">{connection?.name || notification.connection}</div>
+            </div>
+
+            {/* Setor de destino */}
+            <div className="flex flex-col items-start gap-2 w-[368px] h-[51px]">
+              <div className="font-inter font-medium text-base leading-[19px] text-black/70 w-full">Setor de destino</div>
+              <div className="font-inter font-medium text-base leading-6 text-center text-black">{sector?.name || notification.sector}</div>
+            </div>
+
+            {/* Seção de configurações */}
+            <div className="flex flex-col items-start gap-2 w-[368px] h-[94px]">
+              <div className="font-inter font-medium text-base leading-[19px] text-black/70 w-full">Mensagem</div>
+              <div className="flex items-start p-[10px] gap-[10px] w-[368px] h-[67px] bg-white border border-black/5 rounded-xl">
+                <div className="font-inter font-medium text-base leading-6 text-black w-[348px] h-12">
+                  {typeof notification.message === 'string'
+                    ? notification.message.split(/(\{\{.*?\}\})/g).map((part, idx) =>
+                        part.match(/^\{\{.*\}\}$/)
+                          ? <span key={idx} className="text-[#00B16C] font-semibold">{part}</span>
+                          : part
+                      )
+                    : notification.message}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <button onClick={() => onEdit(notification.id)} className="w-[262px] h-[48px] rounded-full bg-[#0B4D33] text-white font-semibold text-[16px] leading-[19px] mx-auto mt-8 flex items-center justify-center" style={{ fontWeight: 600, fontSize: 16, lineHeight: '19px', color: '#fff', position: 'static' }}>
-          <Edit className="w-4 h-4 mr-2" />
-          Editar notificação
+      </div>
+
+      {/* Botão Editar notificação */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 top-[526px]">
+        <button onClick={() => onEdit(notification.id)} className="flex items-center justify-center px-[10px] py-[10px] gap-[10px] w-[388px] h-12 bg-[#0B4D33] rounded-full hover:bg-[#0B4D33]/90 transition-colors">
+          <Edit className="w-6 h-6 text-white" strokeWidth={2} />
+          <span className="font-inter font-semibold text-base leading-[19px] text-white">Editar notificação</span>
         </button>
       </div>
     </div>
