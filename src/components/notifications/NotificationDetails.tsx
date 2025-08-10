@@ -58,7 +58,14 @@ export function NotificationDetails({ notificationId, onBack, onEdit }: Notifica
         {/* Status */}
         <div>
           <div className="font-inter font-medium text-base leading-[19px] text-black/70 mb-1">Status</div>
-          <div className="flex items-center justify-center w-full h-9 bg-[#E1E9E7] rounded-full">
+          <div
+            className="flex items-center justify-center w-full h-9 rounded-full"
+            style={{
+              background: notification.isActive
+                ? '#E1E9E7' // mesmo tom do badge ativo
+                : '#FDE2E1' // vermelho claro sólido equivalente ao verde do ativo
+            }}
+          >
             <StatusBadge isActive={notification.isActive} />
           </div>
         </div>

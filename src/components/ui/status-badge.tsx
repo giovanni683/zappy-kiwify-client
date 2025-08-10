@@ -19,9 +19,9 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
         alignItems: 'center',
         padding: '8px',
         gap: '13px',
-        width: '129px',
+        width: '100%',
         height: '36px',
-        background: '#E1E9E7',
+        background: isActive ? '#E1E9E7' : '#FDE2E1',
         borderRadius: '100px',
       }}
     >
@@ -60,9 +60,9 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
         alignItems: 'center',
         padding: '8px',
         gap: '13px',
-        width: '129px',
+        width: '100%',
         height: '36px',
-        background: 'rgba(239,68,68,0.2)',
+        background: isActive ? '#E1E9E7' : '#FDE2E1',
         borderRadius: '100px',
       }}
     >
