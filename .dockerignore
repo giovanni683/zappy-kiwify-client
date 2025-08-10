@@ -1,0 +1,10 @@
+node_modules
+babel.config.js
+babel.config.bak
+
+*.md
+*.spec.*
+*.test.*
+.git
+.gitignore
+__tests__/

@@ -70,20 +70,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-  .page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    width: 420px;
-    padding-bottom: 11px;
-    background: #F9FAFB;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-  margin-left: auto;
-  margin-right: auto;
-}
+  /* Removido .page-container para restaurar layout funcional */
 }
 
 @layer base {

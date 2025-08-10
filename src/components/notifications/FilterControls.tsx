@@ -1,5 +1,5 @@
-"use client";
 
+import React from 'react';
 import { SearchInput } from '@/components/ui/search-input';
 import { FilterTabs } from '@/components/ui/filter-tabs';
 

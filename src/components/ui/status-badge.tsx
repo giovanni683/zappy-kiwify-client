@@ -1,3 +1,5 @@
+import React from 'react';
+import { inter } from '@/app/layout';
 import { cn } from '@/lib/utils';
 import { Check, X } from 'lucide-react';
 
@@ -9,6 +11,7 @@ interface StatusBadgeProps {
 export function StatusBadge({ isActive, className }: StatusBadgeProps) {
   return isActive ? (
     <div
+      className={inter.className + (className ? ` ${className}` : '')}
       style={{
         display: 'flex',
         flexDirection: 'row',
@@ -21,7 +24,6 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
         background: '#E1E9E7',
         borderRadius: '100px',
       }}
-      className={className}
     >
       <span style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {/* Usando CircleCheck para o teste visual */}
@@ -33,7 +35,7 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
       <span
         style={{
           height: '24px',
-          fontFamily: 'Inter',
+          fontFamily: 'Inter, sans-serif',
           fontStyle: 'normal',
           fontWeight: 600,
           fontSize: '16px',
@@ -50,6 +52,7 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
     </div>
   ) : (
     <div
+      className={inter.className + (className ? ` ${className}` : '')}
       style={{
         display: 'flex',
         flexDirection: 'row',
@@ -62,7 +65,6 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
         background: 'rgba(239,68,68,0.2)',
         borderRadius: '100px',
       }}
-      className={className}
     >
       <span style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {/* Usando CircleX para o teste visual */}
@@ -74,7 +76,7 @@ export function StatusBadge({ isActive, className }: StatusBadgeProps) {
       <span
         style={{
           height: '24px',
-          fontFamily: 'Inter',
+          fontFamily: 'Inter, sans-serif',
           fontStyle: 'normal',
           fontWeight: 600,
           fontSize: '16px',

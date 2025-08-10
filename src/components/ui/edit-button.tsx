@@ -1,3 +1,4 @@
+import { inter } from '@/app/layout';
 import { SquarePen } from "lucide-react";
 import React from "react";
 import Image from 'next/image';
@@ -28,22 +29,26 @@ export function EditButton({ className, onClick }: EditButtonProps) {
         position: 'relative',
         border: 'none',
         cursor: 'pointer',
+        fontFamily: 'Inter',
       }}
     >
-      <span style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Image src={squarePenIcon} alt="Editar" width={24} height={24} style={{ position: 'absolute', left: '12.5%', right: '8.35%', top: '8.35%', bottom: '12.5%' }} />
+      <span style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Image src={squarePenIcon} alt="Editar" width={24} height={24} />
       </span>
       <span
+        className={inter.className}
         style={{
           width: '45px',
           height: '24px',
-          fontFamily: 'Inter',
           fontStyle: 'normal',
           fontWeight: 500,
           fontSize: '16px',
           lineHeight: '24px',
-          textAlign: 'center',
           color: '#000',
+          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         Editar
@@ -51,3 +56,4 @@ export function EditButton({ className, onClick }: EditButtonProps) {
     </button>
   );
 }
+

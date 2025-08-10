@@ -1,3 +1,5 @@
+import React from 'react';
+import { inter } from '@/app/layout';
 import { cn } from '@/lib/utils';
 
 interface FilterTabsProps {
@@ -11,7 +13,6 @@ export function FilterTabs({ activeFilter, onFilterChange }: FilterTabsProps) {
     { id: 'ativos' as const, label: 'Ativos' },
     { id: 'inativos' as const, label: 'Inativos' },
   ];
-
   return (
     <div
       style={{
@@ -28,90 +29,50 @@ export function FilterTabs({ activeFilter, onFilterChange }: FilterTabsProps) {
         borderRadius: '20px',
       }}
     >
-      {/* Todos */}
-      <button
-        onClick={() => onFilterChange('todos')}
-        style={{
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '10px',
-          gap: '10px',
-          width: '107px',
-          height: '36px',
-          background: activeFilter === 'todos' ? 'rgba(11,77,51,0.1)' : 'transparent',
-          border: activeFilter === 'todos' ? '1px solid #0B4D33' : '1px solid transparent',
-          borderRadius: '20px',
-          fontFamily: 'Inter',
-          fontWeight: activeFilter === 'todos' ? 700 : 500,
-          fontSize: '16px',
-          lineHeight: '24px',
-          color: '#000',
-          textAlign: 'center',
-          cursor: 'pointer',
-          position: 'relative',
-        }}
-      >
-        <span style={{ width: '49px', height: '24px', textAlign: 'center', fontWeight: activeFilter === 'todos' ? 700 : 500 }}>Todos</span>
-      </button>
-      {/* Ativos */}
-      <button
-        onClick={() => onFilterChange('ativos')}
-        style={{
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '10px',
-          gap: '10px',
-          width: '107px',
-          height: '36px',
-          background: activeFilter === 'ativos' ? 'rgba(11,77,51,0.1)' : 'transparent',
-          border: activeFilter === 'ativos' ? '1px solid #0B4D33' : '1px solid transparent',
-          borderRadius: '20px',
-          fontFamily: 'Inter',
-          fontWeight: activeFilter === 'ativos' ? 700 : 500,
-          fontSize: '16px',
-          lineHeight: '24px',
-          color: '#000',
-          textAlign: 'center',
-          cursor: 'pointer',
-          position: 'relative',
-        }}
-      >
-        <span style={{ width: '48px', height: '24px', textAlign: 'center', fontWeight: activeFilter === 'ativos' ? 700 : 500 }}>Ativos</span>
-      </button>
-      {/* Inativos */}
-      <button
-        onClick={() => onFilterChange('inativos')}
-        style={{
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '10px',
-          gap: '10px',
-          width: '107px',
-          height: '36px',
-          background: activeFilter === 'inativos' ? 'rgba(11,77,51,0.1)' : 'transparent',
-          border: activeFilter === 'inativos' ? '1px solid #0B4D33' : '1px solid transparent',
-          borderRadius: '20px',
-          fontFamily: 'Inter',
-          fontWeight: activeFilter === 'inativos' ? 700 : 500,
-          fontSize: '16px',
-          lineHeight: '24px',
-          color: '#000',
-          textAlign: 'center',
-          cursor: 'pointer',
-          position: 'relative',
-        }}
-      >
-        <span style={{ width: '60px', height: '24px', textAlign: 'center', fontWeight: activeFilter === 'inativos' ? 700 : 500 }}>Inativos</span>
-      </button>
+      {filters.map(f => (
+        <button
+          key={f.id}
+          onClick={() => onFilterChange(f.id)}
+          style={{
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '10px',
+            gap: '10px',
+            width: f.id === 'inativos' ? '107px' : '107px',
+            height: '36px',
+            background: activeFilter === f.id ? 'rgba(11,77,51,0.1)' : 'transparent',
+            border: activeFilter === f.id ? '1px solid #0B4D33' : '1px solid transparent',
+            borderRadius: '20px',
+            fontFamily: 'Inter, sans-serif',
+            fontStyle: 'normal',
+            fontWeight: activeFilter === f.id ? 700 : 500,
+            fontSize: '16px',
+            lineHeight: '24px',
+            color: '#000',
+            textAlign: 'center',
+            cursor: 'pointer',
+            position: 'relative',
+          }}
+        >
+          <span style={{
+            width: f.id === 'inativos' ? '60px' : f.id === 'ativos' ? '48px' : '49px',
+            height: '24px',
+            fontFamily: 'Inter, sans-serif',
+            fontStyle: 'normal',
+            fontWeight: activeFilter === f.id ? 700 : 500,
+            fontSize: '16px',
+            lineHeight: '24px',
+            color: '#000',
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>{f.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
