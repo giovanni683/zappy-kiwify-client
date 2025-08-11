@@ -38,5 +38,4 @@ Aplicação React/Next.js para gerenciamento e envio de notificações em tempo 
 - A integração é feita via serviços em `src/services/`.
 - Exemplos de uso e mocks estão nos testes em `src/__tests__/`.
 
-## Contato
-Dúvidas ou sugestões: [Seu email ou contato]
+
