@@ -1,24 +1,22 @@
-import type { Server as WebSocketServerType, WebSocket as WebSocketType } from 'ws';
-const WebSocket = require('ws');
-const WebSocketServer: typeof WebSocketServerType = WebSocket.Server;
+import { Server } from 'socket.io';
+let io: Server | null = null;
 
-let wss: WebSocketServerType | null = null;
-let clients: Set<WebSocketType> = new Set();
-
-export function initWebSocketServer(server: any): WebSocketServerType {
-  if (wss) return wss;
-  wss = new WebSocketServer({ server });
-  wss.on('connection', (ws: WebSocketType) => {
-    clients.add(ws);
-    ws.on('close', () => clients.delete(ws));
+export function initSocketIOServer(server: any): Server {
+  if (io) return io;
+  io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST']
+    }
   });
-  return wss;
+  io.on('connection', (socket) => {
+    // Você pode adicionar lógica de autenticação ou rooms aqui
+  });
+  return io;
 }
 
 export function broadcastNotification(data: unknown): void {
-  for (const client of Array.from(clients)) {
-    if ((client as WebSocketType).readyState === WebSocket.OPEN) {
-      (client as WebSocketType).send(JSON.stringify(data));
-    }
+  if (io) {
+    io.emit('notification', data);
   }
 }

@@ -1,42 +1,33 @@
-// Serviço WebSocket para notificações em tempo real
-let ws: WebSocket | null = null;
-let reconnectTimeout: NodeJS.Timeout | null = null;
+// Serviço Socket.IO para notificações em tempo real
+import io from 'socket.io-client';
+let socket: ReturnType<typeof io> | null = null;
 
 export function connectNotificationWebSocket(onMessage: (data: any) => void) {
-  const url = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001'; // ajuste para sua URL
-  ws = new WebSocket(url);
+  const url = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3001'; // ajuste para sua URL
+  socket = io(url);
 
-  ws.onopen = () => {
-    console.log('WebSocket conectado');
-  };
+  socket.on('connect', () => {
+    console.log('Socket.IO conectado');
+  });
 
-  ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      onMessage(data);
-    } catch (err) {
-      console.error('Erro ao processar mensagem WebSocket:', err);
-    }
-  };
+  socket.on('notification', (data: any) => {
+    onMessage(data);
+  });
 
-  ws.onclose = () => {
-    console.warn('WebSocket desconectado, tentando reconectar...');
-    reconnectTimeout = setTimeout(() => connectNotificationWebSocket(onMessage), 5000);
-  };
+  socket.on('disconnect', () => {
+    console.warn('Socket.IO desconectado, tentando reconectar...');
+    setTimeout(() => connectNotificationWebSocket(onMessage), 5000);
+  });
 
-  ws.onerror = (err) => {
-    console.error('WebSocket erro:', err);
-    ws?.close();
-  };
+  socket.on('error', (err: any) => {
+    console.error('Socket.IO erro:', err);
+    socket?.disconnect();
+  });
 }
 
 export function disconnectNotificationWebSocket() {
-  if (ws) {
-    ws.close();
-    ws = null;
-  }
-  if (reconnectTimeout) {
-    clearTimeout(reconnectTimeout);
-    reconnectTimeout = null;
+  if (socket) {
+    socket.disconnect();
+    socket = null;
   }
 }
