@@ -31,10 +31,8 @@ export default function HomePage() {
   const [tela, setTela] = useState<Tela>('lista');
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Modal state helpers
   const isModalOpen = tela !== 'lista';
 
-  // Handlers para navegação
   const handleVerDetalhes = (id: string) => {
   console.log('Ver detalhes:', id);
   setSelectedId(id);
