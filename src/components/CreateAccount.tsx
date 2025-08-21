@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createAccount } from '../api/zappy';
+import { ACCOUNTS } from '../api/endpoints';
 
 const CreateAccount: React.FC = () => {
   const [name, setName] = useState('');
@@ -7,8 +7,13 @@ const CreateAccount: React.FC = () => {
   const [result, setResult] = useState<any>(null);
 
   const handleCreate = async () => {
-    const res = await createAccount(name, status);
-    setResult(res);
+    const res = await fetch(ACCOUNTS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, status })
+    });
+    const data = await res.json();
+    setResult(data);
   };
 
   return (

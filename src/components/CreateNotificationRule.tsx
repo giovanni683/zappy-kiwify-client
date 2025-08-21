@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createNotificationRule } from '../api/zappy';
+import { NOTIFICATION_RULES } from '../api/endpoints';
 
 const CreateNotificationRule: React.FC = () => {
   const [integrationId, setIntegrationId] = useState('');
@@ -12,8 +12,13 @@ const CreateNotificationRule: React.FC = () => {
 
   const handleCreate = async () => {
     const adj = { adjustments };
-    const res = await createNotificationRule(integrationId, accountId, active, event, message, adj);
-    setResult(res);
+    const res = await fetch(NOTIFICATION_RULES, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ integrationId, accountId, active, event, message, adjustments: adj })
+    });
+    const data = await res.json();
+    setResult(data);
   };
 
   return (

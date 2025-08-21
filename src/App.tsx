@@ -1,46 +1,18 @@
-import { createAccount, listAccounts, createIntegration, listIntegrations, createNotificationRule, listNotificationRules } from './api/zappy';
+import React, { useEffect } from 'react';
 
-function App() {
-  const handleCreateAccount = async () => {
-    const result = await createAccount('Conta Teste', 'active');
-    console.log(result);
-  };
+const App: React.FC = () => {
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/zappy/accounts`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Resposta do backend:', data);
+      })
+      .catch(err => {
+        console.error('Erro ao conectar com o backend:', err);
+      });
+  }, []);
 
-  const handleListAccounts = async () => {
-    const accounts = await listAccounts();
-    console.log(accounts);
-  };
-
-  const handleCreateIntegration = async () => {
-    const result = await createIntegration('accountId123', 'typeX', { user: 'user', pass: 'pass' });
-    console.log(result);
-  };
-
-  const handleListIntegrations = async () => {
-    const integrations = await listIntegrations();
-    console.log(integrations);
-  };
-
-  const handleCreateNotificationRule = async () => {
-    const result = await createNotificationRule('integrationId123', 'accountId123', true, 'eventX', 'Mensagem', { ajuste: 1 });
-    console.log(result);
-  };
-
-  const handleListNotificationRules = async () => {
-    const rules = await listNotificationRules();
-    console.log(rules);
-  };
-
-  return (
-    <div>
-      <button onClick={handleCreateAccount}>Criar Conta</button>
-      <button onClick={handleListAccounts}>Listar Contas</button>
-      <button onClick={handleCreateIntegration}>Criar Integração</button>
-      <button onClick={handleListIntegrations}>Listar Integrações</button>
-      <button onClick={handleCreateNotificationRule}>Criar Regra de Notificação</button>
-      <button onClick={handleListNotificationRules}>Listar Regras de Notificação</button>
-    </div>
-  );
-}
+  return <div>Veja o console do navegador para o resultado!</div>;
+};
 
 export default App;

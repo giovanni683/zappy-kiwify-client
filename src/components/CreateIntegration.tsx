@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createIntegration } from '../api/zappy';
+import { INTEGRATIONS } from '../api/endpoints';
 
 const CreateIntegration: React.FC = () => {
   const [accountId, setAccountId] = useState('');
@@ -9,8 +9,13 @@ const CreateIntegration: React.FC = () => {
 
   const handleCreate = async () => {
     const creds = { credentials };
-    const res = await createIntegration(accountId, type, creds);
-    setResult(res);
+    const res = await fetch(INTEGRATIONS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accountId, type, credentials: creds })
+    });
+    const data = await res.json();
+    setResult(data);
   };
 
   return (

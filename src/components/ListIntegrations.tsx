@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { listIntegrations } from '../api/zappy';
+import { INTEGRATIONS } from '../api/endpoints';
 
 const ListIntegrations: React.FC = () => {
   const [integrations, setIntegrations] = useState<any[]>([]);
 
   useEffect(() => {
-    listIntegrations().then(setIntegrations);
+    fetch(INTEGRATIONS)
+      .then(res => res.json())
+      .then(data => setIntegrations(data))
+      .catch(err => console.error('Erro ao buscar integrações:', err));
   }, []);
 
   return (

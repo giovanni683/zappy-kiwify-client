@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { listNotificationRules } from '../api/zappy';
+import { NOTIFICATION_RULES } from '../api/endpoints';
 
 const ListNotificationRules: React.FC = () => {
   const [rules, setRules] = useState<any[]>([]);
 
   useEffect(() => {
-    listNotificationRules().then(setRules);
+    fetch(NOTIFICATION_RULES)
+      .then(res => res.json())
+      .then(data => setRules(data))
+      .catch(err => console.error('Erro ao buscar regras:', err));
   }, []);
 
   return (

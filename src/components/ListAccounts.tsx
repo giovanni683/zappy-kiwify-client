@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { listAccounts } from '../api/zappy';
+import { ACCOUNTS } from '../api/endpoints';
 
 const ListAccounts: React.FC = () => {
   const [accounts, setAccounts] = useState<any[]>([]);
 
   useEffect(() => {
-    listAccounts().then(setAccounts);
+    fetch(ACCOUNTS)
+      .then(res => res.json())
+      .then(data => setAccounts(data))
+      .catch(err => console.error('Erro ao buscar contas:', err));
   }, []);
 
   return (
