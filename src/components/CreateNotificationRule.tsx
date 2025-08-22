@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NOTIFICATION_RULES } from '../api/endpoints';
+import api from '../api/axios';
 
 const CreateNotificationRule: React.FC = () => {
   const [integrationId, setIntegrationId] = useState('');
@@ -11,14 +12,15 @@ const CreateNotificationRule: React.FC = () => {
   const [result, setResult] = useState<any>(null);
 
   const handleCreate = async () => {
-    const adj = { adjustments };
-    const res = await fetch(NOTIFICATION_RULES, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ integrationId, accountId, active, event, message, adjustments: adj })
-    });
-    const data = await res.json();
-    setResult(data);
+    try {
+      const adj = { adjustments };
+      const res = await api.post(NOTIFICATION_RULES.replace(process.env.NEXT_PUBLIC_API_URL || '', ''), {
+        integrationId, accountId, active, event, message, adjustments: adj
+      });
+      setResult(res.data);
+    } catch (err) {
+      console.error('Erro ao criar regra:', err);
+    }
   };
 
   return (

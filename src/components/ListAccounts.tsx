@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ACCOUNTS } from '../api/endpoints';
+import api from '../api/axios';
 
 const ListAccounts: React.FC = () => {
   const [accounts, setAccounts] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(ACCOUNTS)
-      .then(res => res.json())
-      .then(data => setAccounts(data))
+    api.get(ACCOUNTS.replace(process.env.NEXT_PUBLIC_API_URL || '', ''))
+      .then(res => setAccounts(res.data))
       .catch(err => console.error('Erro ao buscar contas:', err));
   }, []);
 

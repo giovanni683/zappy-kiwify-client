@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { INTEGRATIONS } from '../api/endpoints';
+import api from '../api/axios';
 
 const ListIntegrations: React.FC = () => {
   const [integrations, setIntegrations] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(INTEGRATIONS)
-      .then(res => res.json())
-      .then(data => setIntegrations(data))
+    api.get(INTEGRATIONS.replace(process.env.NEXT_PUBLIC_API_URL || '', ''))
+      .then(res => setIntegrations(res.data))
       .catch(err => console.error('Erro ao buscar integrações:', err));
   }, []);
 

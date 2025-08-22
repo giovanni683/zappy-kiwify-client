@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { INTEGRATIONS } from '../api/endpoints';
+import api from '../api/axios';
 
 const CreateIntegration: React.FC = () => {
   const [accountId, setAccountId] = useState('');
@@ -8,14 +9,13 @@ const CreateIntegration: React.FC = () => {
   const [result, setResult] = useState<any>(null);
 
   const handleCreate = async () => {
-    const creds = { credentials };
-    const res = await fetch(INTEGRATIONS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ accountId, type, credentials: creds })
-    });
-    const data = await res.json();
-    setResult(data);
+    try {
+      const creds = { credentials };
+      const res = await api.post(INTEGRATIONS.replace(process.env.NEXT_PUBLIC_API_URL || '', ''), { accountId, type, credentials: creds });
+      setResult(res.data);
+    } catch (err) {
+      console.error('Erro ao criar integração:', err);
+    }
   };
 
   return (

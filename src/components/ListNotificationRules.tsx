@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { NOTIFICATION_RULES } from '../api/endpoints';
+import api from '../api/axios';
 
 const ListNotificationRules: React.FC = () => {
   const [rules, setRules] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(NOTIFICATION_RULES)
-      .then(res => res.json())
-      .then(data => setRules(data))
+    api.get(NOTIFICATION_RULES.replace(process.env.NEXT_PUBLIC_API_URL || '', ''))
+      .then(res => setRules(res.data))
       .catch(err => console.error('Erro ao buscar regras:', err));
   }, []);
 

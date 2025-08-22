@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ACCOUNTS } from '../api/endpoints';
+import api from '../api/axios';
 
 const CreateAccount: React.FC = () => {
   const [name, setName] = useState('');
@@ -7,13 +8,12 @@ const CreateAccount: React.FC = () => {
   const [result, setResult] = useState<any>(null);
 
   const handleCreate = async () => {
-    const res = await fetch(ACCOUNTS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, status })
-    });
-    const data = await res.json();
-    setResult(data);
+    try {
+      const res = await api.post(ACCOUNTS.replace(process.env.NEXT_PUBLIC_API_URL || '', ''), { name, status });
+      setResult(res.data);
+    } catch (err) {
+      console.error('Erro ao criar conta:', err);
+    }
   };
 
   return (
