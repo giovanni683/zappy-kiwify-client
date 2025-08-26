@@ -1,4 +1,3 @@
-# Dockerfile para Next.js app (produção, sem Cypress)
 FROM node:18-alpine AS builder
 
 # 1. Variáveis de ambiente

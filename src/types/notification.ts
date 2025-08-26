@@ -34,3 +34,14 @@ export interface Variable {
   token: string;
   description: string;
 }
+
+// DTO para criação de contato alinhado ao backend
+export interface ICreateContactInputDto {
+  name: string;
+  number: string;
+  channel?: number; // valor 1 para ZAPPY
+}
+
+export enum ChannelKey {
+  ZAPPY = 1
+}
