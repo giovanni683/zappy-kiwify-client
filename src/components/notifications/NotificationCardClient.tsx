@@ -59,7 +59,7 @@ export function NotificationCardClient({ notification, onClick, onEdit }: Notifi
         }}>
           <span
               style={{
-                width: '210px',
+                width: '220px',
                 height: '24px',
                 fontFamily: 'Inter, sans-serif',
                 fontStyle: 'normal',

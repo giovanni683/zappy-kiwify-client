@@ -1,29 +1,4 @@
-
 "use client";
-import { connectNotificationWebSocket, disconnectNotificationWebSocket } from '@/services/notification-ws';
-// Inicia WebSocket e atualiza notificações em tempo real
-export function startNotificationWebSocket() {
-  connectNotificationWebSocket((data) => {
-    // Espera receber um array de notificações ou uma notificação única
-    if (Array.isArray(data)) {
-      useNotificationStore.getState().setNotifications(data);
-    } else if (data && data.id) {
-      // Atualiza ou adiciona notificação individual
-      const store = useNotificationStore.getState();
-      const exists = store.notifications.some(n => n.id === data.id);
-      if (exists) {
-        store.updateNotification(data.id, data);
-      } else {
-        store.addNotification(data);
-      }
-    }
-  });
-}
-
-export function stopNotificationWebSocket() {
-  disconnectNotificationWebSocket();
-}
-// ...existing code...
 let pollingInterval: NodeJS.Timeout | null = null;
 
 export function startNotificationPolling(term: string = '') {
@@ -32,7 +7,7 @@ export function startNotificationPolling(term: string = '') {
     try {
       await useNotificationStore.getState().buscarNotificacoesBackend(term);
     } catch (err) {
-  // ...existing code...
+      console.error('Erro ao buscar notificações:', err);
     }
   }, 10000);
 }
@@ -73,7 +48,6 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
       const notificacoes = await buscarNotificacoes(term, filterStatus);
       set({ notifications: notificacoes });
     } catch (err) {
-  // ...existing code...
       console.error('Erro ao buscar notificações do backend:', err);
     }
   },

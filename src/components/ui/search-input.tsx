@@ -24,7 +24,7 @@ export function SearchInput({ value, onChange, placeholder = "Buscar..." }: Sear
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder || "Buscar por nome"}
         className={
-          `${inter.className} font-medium text-[16px] leading-6 text-black/70 bg-transparent border-none outline-none w-[130px] h-6 p-0`
+          `${inter.className} font-medium text-[16px] leading-6 text-black/70 bg-transparent border-none outline-none w-[132px] h-6 p-0`
         }
         style={{ boxShadow: 'none' }}
       />

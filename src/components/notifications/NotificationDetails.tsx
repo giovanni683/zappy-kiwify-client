@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { startNotificationWebSocket, stopNotificationWebSocket } from '@/lib/notification-store';
+import React from 'react';
 import { ArrowLeft, Edit } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { mockEvents, mockConnections, mockSectors, mockNotifications } from '@/lib/mock-data';
@@ -10,14 +9,7 @@ interface NotificationDetailsProps {
   onEdit: (id: string) => void;
 }
 
-
 export function NotificationDetails({ notificationId, onBack, onEdit }: NotificationDetailsProps) {
-  useEffect(() => {
-    startNotificationWebSocket();
-    return () => {
-      stopNotificationWebSocket();
-    };
-  }, []);
   const notification = mockNotifications.find(n => n.id === notificationId);
   if (!notification) {
     return (

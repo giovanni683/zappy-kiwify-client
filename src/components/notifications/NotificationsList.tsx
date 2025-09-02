@@ -1,8 +1,5 @@
-
 "use client";
-import React, { useEffect } from 'react';
-import { startNotificationWebSocket, stopNotificationWebSocket } from '@/lib/notification-store';
-
+import React from 'react';
 import { NotificationCardClient } from './NotificationCardClient';
 import { Notification } from '@/types/notification';
 
@@ -13,12 +10,6 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ notifications, onNotificationClick, onNotificationEdit }: NotificationsListProps) {
-  useEffect(() => {
-    startNotificationWebSocket();
-    return () => {
-      stopNotificationWebSocket();
-    };
-  }, []);
   if (!notifications || notifications.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
