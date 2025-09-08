@@ -6,8 +6,10 @@ export interface Notification {
   sector: string;
   message: string;
   isActive: boolean;
+  active: boolean; // compatível com backend
   createdAt: Date;
   updatedAt: Date;
+  integrationId?: string | null; // id real da integração/conexão
 }
 
 export interface Connection {

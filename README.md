@@ -1,7 +1,7 @@
 # zappy-kiwify-app
 
 ## Visão Geral
-Aplicação React/Next.js para gerenciamento e envio de notificações em tempo real, integrada ao backend ZDK. Possui testes automatizados, ambiente Docker para produção e arquitetura modular.
+Aplicação React/Next.js para gerenciamento e envio de notificações em tempo real. Possui testes automatizados, ambiente Docker para produção e arquitetura modular.
 
 ## Estrutura do Projeto
 - `src/components/notifications/`: Componentes de notificação (criar, editar, listar, detalhes)

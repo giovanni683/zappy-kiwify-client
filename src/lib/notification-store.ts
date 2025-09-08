@@ -21,14 +21,19 @@ export function stopNotificationPolling() {
 
 import { create } from 'zustand';
 import { Notification } from '@/types/notification';
-import { mockNotifications } from '@/lib/mock-data';
 import { buscarNotificacoes } from '@/services/notification-api';
+import { useEffect } from 'react';
 
 interface NotificationStore {
   notifications: Notification[];
   currentNotification: Notification | null;
   searchTerm: string;
   filterStatus: 'todos' | 'ativos' | 'inativos';
+  validIntegrationIds: string[];
+  setValidIntegrationIds: (ids: string[]) => void;
+  accountId: string;
+  setAccountId: (id: string) => void;
+  fetchAndSetAccountId: () => Promise<void>;
   setNotifications: (notifications: Notification[]) => void;
   addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateNotification: (id: string, notification: Partial<Notification>) => void;
@@ -38,20 +43,41 @@ interface NotificationStore {
   setFilterStatus: (status: 'todos' | 'ativos' | 'inativos') => void;
   getFilteredNotifications: () => Notification[];
   getNotificationById: (id: string) => Notification | undefined;
-  buscarNotificacoesBackend: (term: string) => Promise<void>;
+  buscarNotificacoesBackend: (term: string, accountId?: string) => Promise<void>;
 }
 
 const useNotificationStore = create<NotificationStore>((set, get) => ({
-  buscarNotificacoesBackend: async (term) => {
+  validIntegrationIds: [],
+  setValidIntegrationIds: (ids) => {
+    console.log('Integrações válidas:', ids);
+    set({ validIntegrationIds: ids });
+  },
+  accountId: '',
+  setAccountId: (id) => set({ accountId: id }),
+  fetchAndSetAccountId: async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${baseUrl}/api/zappy/accounts`);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0 && data[0].id) {
+        set({ accountId: data[0].id });
+      }
+    } catch (err) {
+      console.error('Erro ao buscar accounts:', err);
+    }
+  },
+
+  buscarNotificacoesBackend: async (term: string, accountId?: string) => {
     try {
       const { filterStatus } = get();
-      const notificacoes = await buscarNotificacoes(term, filterStatus);
+      const notificacoes = await buscarNotificacoes(term, filterStatus, accountId);
+      console.log('Notificações recebidas:', notificacoes);
       set({ notifications: notificacoes });
     } catch (err) {
       console.error('Erro ao buscar notificações do backend:', err);
     }
   },
-  notifications: mockNotifications,
+  notifications: [],
   currentNotification: null,
   searchTerm: '',
   filterStatus: 'todos',
@@ -98,15 +124,21 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
   setFilterStatus: (status) => set({ filterStatus: status }),
 
   getFilteredNotifications: () => {
-    const { notifications, searchTerm, filterStatus } = get();
+    const { notifications, searchTerm, filterStatus, validIntegrationIds } = get();
     return notifications.filter((notification) => {
-      const matchesSearch = notification.name.toLowerCase().includes(searchTerm.toLowerCase());
+      if (!notification.name) return false;
+      const matchesSearch = (
+        notification.event && notification.event.toLowerCase().includes(searchTerm.toLowerCase())
+      );
       const matchesFilter = 
         filterStatus === 'todos' ||
-        (filterStatus === 'ativos' && notification.isActive) ||
-        (filterStatus === 'inativos' && !notification.isActive);
-      
-      return matchesSearch && matchesFilter;
+        (filterStatus === 'ativos' && notification.active) ||
+        (filterStatus === 'inativos' && !notification.active);
+      const matchesIntegration =
+        validIntegrationIds.length === 0
+          ? true
+          : (!notification.integrationId || validIntegrationIds.includes(notification.integrationId));
+      return matchesSearch && matchesFilter && matchesIntegration;
     });
   },
 

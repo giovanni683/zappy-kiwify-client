@@ -1,67 +1,82 @@
-import React, { useRef, useState } from 'react';
+"use client";
+import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Info } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import useNotificationStore from '@/lib/notification-store';
 
 interface NewNotificationProps {
   onBack: () => void;
 }
 
-function renderMessagePreview(text: string) {
-  const regex = /(\{\{[^}]+\}\})/g;
-  const parts = text.split(regex);
-  return (
-    <>
-      {parts.map((part, i) =>
-        /^\{\{[^}]+\}\}$/.test(part) ? (
-          <span
-            key={i}
-            style={{
-              background: 'transparent',
-              color: '#00B16C',
-              borderRadius: 4,
-              padding: '0 2px',
-              fontWeight: 600,
-            }}
-          >
-            {part}
-          </span>
-        ) : (
-          <span key={i} style={{ color: '#000' }}>{part}</span>
-        )
-      )}
-    </>
-  );
-}
-
 export function NewNotification({ onBack }: NewNotificationProps) {
-  // Estados
-  const [eventoValue, setEventoValue] = useState('Selecione um evento');
-  const [eventoOpen, setEventoOpen] = useState(false);
-  const eventoOptions = ['Selecione um evento', 'Evento 1', 'Evento 2'];
+  const router = useRouter();
+  const { accountId } = useNotificationStore();
+  // Arrays completos vindos do backend
+  const [conexoes, setConexoes] = useState<any[]>([]);
+  const [setores, setSetores] = useState<any[]>([]);
+  const [eventos, setEventos] = useState<string[]>([]);
 
-  const [conexaoValue, setConexaoValue] = useState('Selecione uma conexão');
-  const [conexaoOpen, setConexaoOpen] = useState(false);
-  const conexaoOptions = ['Selecione uma conexão', 'Conexão 1', 'Conexão 2'];
-
-  const [setorValue, setSetorValue] = useState('Selecione um setor');
-  const [setorOpen, setSetorOpen] = useState(false);
-  const setorOptions = ['Selecione um setor', 'Setor 1', 'Setor 2'];
-
+  // Estados controlados por id/valor real
+  const [integrationId, setIntegrationId] = useState('');
+  const [sectorId, setSectorId] = useState('');
+  const [event, setEvent] = useState('');
+  const [isActive, setIsActive] = useState(true);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [created, setCreated] = useState(false);
   const messageRef = useRef<HTMLTextAreaElement>(null);
 
-  const [error, setError] = useState<string | null>(null);
-  const [isActive, setIsActive] = useState(true);
-
-  // Simulação do estado de conexão Zappy
-  const isConnected = false; // Troque para true para simular conectado
-
-  // Variáveis disponíveis para inserção
   const variables = [
-    { label: 'Nome', value: '{{nome}}' },
-    { label: 'Telefone', value: '{{telefone}}' },
-    { label: 'Setor', value: '{{setor}}' },
+    { label: 'Nome Completo', value: '{{nomeCompleto}}' },
+    { label: 'Primeiro Nome', value: '{{primeiroNome}}' },
+    { label: 'URL Boleto', value: '{{urlBoleto}}' },
+    { label: 'Código Barras Boleto', value: '{{codigoBarrasBoleto}}' },
+    { label: 'Código Pix', value: '{{codigoPix}}' },
+    { label: 'Nome Produto', value: '{{nomeProduto}}' },
+    { label: 'Status Carrinho', value: '{{statusCarrinho}}' },
+    { label: 'URL Acesso', value: '{{urlAcesso}}' },
+    { label: 'Status Assinatura', value: '{{statusAssinatura}}' },
   ];
+
+  useEffect(() => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    // Buscar eventos
+    fetch(`${baseUrl}/api/zappy/events`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.events)) setEventos(data.events);
+      })
+      .catch(() => setEventos([]));
+    if (!accountId) return;
+    // Buscar conexões
+    fetch(`${baseUrl}/api/zappy/connections/active?accountId=${accountId}`)
+      .then(async res => {
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) setConexoes(data);
+        else if (data?.connections) setConexoes(data.connections);
+        else if (data?.items) setConexoes(data.items);
+        else if (data?.data) setConexoes(data.data);
+        else if (data) console.log('Resposta conexões:', data);
+      })
+      .catch(() => setConexoes([]));
+    // Buscar setores
+    fetch(`${baseUrl}/api/zappy/queues?accountId=${accountId}`)
+      .then(async res => {
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      })
+      .then(data => {
+        console.log("Resposta setores:", data);
+        if (Array.isArray(data)) setSetores(data);
+        else if (data?.queues) setSetores(data.queues);
+        else if (data?.items) setSetores(data.items);
+        else if (data?.data) setSetores(data.data);      })
+      .catch(() => setSetores([]));
+  }, [accountId]);
 
   function handleInsertVariable(variable: string) {
     const textarea = messageRef.current;
@@ -82,22 +97,67 @@ export function NewNotification({ onBack }: NewNotificationProps) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (eventoValue === 'Selecione um evento') {
+    if (!event) {
       setError('Selecione um evento válido.');
       return;
     }
+    if (!integrationId) {
+      setError('Selecione uma conexão válida.');
+      return;
+    }
+    if (!message) {
+      setError('Digite uma mensagem.');
+      return;
+    }
     setError(null);
-    alert('Notificação criada com sucesso!');
+    const payload = {
+      integrationId,
+      accountId: String(accountId),
+      active: isActive,
+      event,
+      message,
+      adjustments: {},
+      variables: {},
+    };
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    fetch(`${baseUrl}/api/zappy/notification-rules`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(async res => {
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      })
+      .then(() => {
+        console.log('Redirecionando para home após criar notificação');
+        window.location.href = '/';
+      })
+      .catch(err => {
+        setError('Erro ao criar notificação: ' + err.message);
+      });
+  }
+
+  function beautifyEventName(event: string) {
+    const map: Record<string, string> = {
+      'boleto_gerado': 'Boleto gerado',
+      'pix_gerado': 'Pix gerado',
+      'compra_aprovada': 'Compra aprovada',
+      'compra_recusada': 'Compra recusada',
+      'carrinho_abandonado': 'Carrinho abandonado',
+      'subscription_late': 'Assinatura atrasada',
+      'subscription_canceled': 'Assinatura cancelada',
+      'compra_reembolsada': 'Compra reembolsada',
+      'chargeback': 'Chargeback',
+      'subscription_renewed': 'Assinatura renovada',
+      // Adicione outros eventos conforme necessário
+    };
+    return map[event] || event.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
   return (
     <div className="page-container mx-auto w-full max-w-[420px] min-h-screen bg-[#F9FAFB] flex flex-col items-start relative" style={{ fontFamily: 'Inter, sans-serif' }}>
-      <button
-        onClick={onBack}
-        className="flex items-center gap-2 px-[14px] py-[6px] bg-[#DCFCE7] rounded-full shadow-none mt-0"
-        style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '16px', lineHeight: '19px', color: '#0B4D33', marginTop: '0px' }}
-        data-testid="new-back-button"
-      >
+      <button onClick={onBack} className="flex items-center gap-2 px-[14px] py-[6px] bg-[#DCFCE7] rounded-full shadow-none mt-0" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '16px', lineHeight: '19px', color: '#0B4D33', marginTop: '0px' }} data-testid="new-back-button">
         <span className="w-5 h-5 flex items-center justify-center mr-1">
           <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 19.5L5 12.5M5 12.5L12 5.5M5 12.5H19" stroke="#0B4D33" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -122,166 +182,63 @@ export function NewNotification({ onBack }: NewNotificationProps) {
         <form className="flex flex-col gap-4 w-full" style={{ marginTop: 8, position: 'static' }} onSubmit={handleSubmit}>
           {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
           {/* Evento */}
-          <div className="flex flex-col gap-[5px] w-full" style={{ position: 'relative' }}>
+          <div className="flex flex-col gap-[5px] w-full relative">
             <label className="form-label font-semibold text-[14px] leading-[17px] text-black">Evento <span className="text-red-500">*</span></label>
-            <div style={{ position: 'relative', width: '100%' }}>
-              <button
-                type="button"
-                onClick={() => setEventoOpen(!eventoOpen)}
-                className="w-full h-[44px] px-[10px] pr-[44px] font-medium text-[14px] leading-[17px] text-black/70 rounded-[10px] border border-black/20 bg-white text-left flex items-center justify-between cursor-pointer"
-              >
-                <span>{eventoValue}</span>
-                <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="24" rx="12" fill="#0062DD" fillOpacity="0.05"/>
-                    <path d="M16 10L12 14L8 10" stroke="black" strokeOpacity="0.7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              </button>
-              {eventoOpen && (
-                <div className="absolute top-[48px] left-0 w-full bg-white border border-black/20 rounded-[10px] shadow-md z-20">
-                  {eventoOptions.map(opt => (
-                    <div
-                      key={opt}
-                      onClick={() => { setEventoValue(opt); setEventoOpen(false); }}
-                      className={`px-[10px] py-[10px] text-[14px] text-black/70 cursor-pointer rounded-[8px] ${eventoValue === opt ? 'bg-gray-100' : 'bg-white'}`}
-                    >
-                      {opt}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <select value={event} onChange={e => setEvent(e.target.value)} className="w-full h-[44px] px-[10px] font-medium text-[14px] text-black/70 rounded-[10px] border border-black/20 bg-white">
+              <option value="">Selecione um evento</option>
+              {eventos.map((ev, idx) => {
+                const eventoObj = ev as any;
+                const value = typeof ev === 'string' ? ev : (eventoObj.key || eventoObj.id || '');
+                const label = typeof ev === 'string' ? beautifyEventName(ev) : beautifyEventName(eventoObj.key || eventoObj.id || '');
+                return (
+                  <option key={value || idx} value={value}>
+                    {label}
+                  </option>
+                );
+              })}
+            </select>
           </div>
-          {/* Conexão + alerta de conexão */}
-          <div className="flex flex-col gap-[5px] w-full" style={{ position: 'relative' }}>
+          {/* Conexão */}
+          <div className="flex flex-col gap-[5px] w-full relative">
             <label className="form-label font-semibold text-[14px] leading-[17px] text-black">Conexão</label>
-            {isConnected ? (
-              <div style={{ position: 'relative', width: '100%' }}>
-                <button
-                  type="button"
-                  onClick={() => setConexaoOpen(!conexaoOpen)}
-                  className="w-full h-[44px] px-[10px] pr-[44px] font-medium text-[14px] leading-[17px] text-black/70 rounded-[10px] border border-black/20 bg-white text-left flex items-center justify-between cursor-pointer"
-                >
-                  <span>{conexaoValue}</span>
-                  <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="24" height="24" rx="12" fill="#0062DD" fillOpacity="0.05"/>
-                      <path d="M16 10L12 14L8 10" stroke="black" strokeOpacity="0.7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </span>
-                </button>
-                {conexaoOpen && (
-                  <div className="absolute top-[48px] left-0 w-full bg-white border border-black/20 rounded-[10px] shadow-md z-20">
-                    {conexaoOptions.map(opt => (
-                      <div
-                        key={opt}
-                        onClick={() => { setConexaoValue(opt); setConexaoOpen(false); }}
-                        className={`px-[10px] py-[10px] text-[14px] text-black/70 cursor-pointer rounded-[8px] ${conexaoValue === opt ? 'bg-gray-100' : 'bg-white'}`}
-                      >
-                        {opt}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <span className="form-description font-medium text-[14px] leading-[17px] text-black/70">Se não selecionar, a conexão padrão será usada.</span>
-              </div>
-            ) : (
-              <div style={{ position: 'relative', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', height: 44, background: '#FFF', border: '1px solid #FFC219', borderRadius: 10, paddingLeft: 12, paddingRight: 12 }}>
-                  <span className="flex items-center gap-2 w-full" style={{ justifyContent: 'space-between' }}>
-                    <span className="font-medium text-black/70 text-[14px]" style={{ fontFamily: 'Inter, sans-serif' }}>Sem conexão</span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 20H12.01M8.5 16.429C9.43464 15.5129 10.6912 14.9997 12 14.9997C13.3088 14.9997 14.5654 15.5129 15.5 16.429M5 12.859C6.41803 11.4689 8.21781 10.5325 10.17 10.169M19 12.859C18.3979 12.2688 17.7235 11.757 16.993 11.336M2 8.82C3.2366 7.71408 4.64809 6.82095 6.177 6.177M22 8.82C20.4747 7.45581 18.6864 6.41814 16.7452 5.77083C14.8039 5.12352 12.7508 4.88025 10.712 5.056M2 2L22 22" stroke="#FFC219" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                </div>
-                {/* Aviso de sem conexão Zappy logo abaixo do campo de conexão, igual ao bloco Importante */}
-                <div className="flex items-start gap-3 w-full rounded-[20px] p-[10px] mb-2" style={{ background: 'rgba(255, 194, 25, 0.2)', height: 80, marginTop: 8, marginBottom: 8 }}>
-                  <Info className="w-6 h-6 text-black flex-shrink-0" />
-                  <div className="flex flex-col gap-[7px] flex-grow">
-                    <span className="font-semibold text-black" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 16, lineHeight: '19px', height: 19 }}>Sem conexão Zappy!</span>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 14, lineHeight: '17px', color: 'rgba(0,0,0,0.7)', height: 34, display: 'block' }}>
-                      Conecte um número na Zappy para poder selecionar uma conexão e enviar notificações.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
+            <select value={integrationId} onChange={e => setIntegrationId(e.target.value)} className="w-full h-[44px] px-[10px] font-medium text-[14px] text-black/70 rounded-[10px] border border-black/20 bg-white">
+              <option value="">Selecione uma conexão</option>
+              {conexoes.map((conn, idx) => (
+                <option key={conn.id || idx} value={conn.id || ''}>{conn.name || conn.id}</option>
+              ))}
+            </select>
+            <span className="form-description font-medium text-[14px] leading-[17px] text-black/70">Se não selecionar, a conexão padrão será usada.</span>
           </div>
           {/* Setor de atendimento */}
-          <div className="flex flex-col gap-[5px] w-full" style={{ position: 'relative' }}>
+          <div className="flex flex-col gap-[5px] w-full relative">
             <label className="form-label font-semibold text-[14px] leading-[17px] text-black">Setor de atendimento</label>
-            <div style={{ position: 'relative', width: '100%' }}>
-              <button
-                type="button"
-                onClick={() => setSetorOpen(!setorOpen)}
-                className="w-full h-[44px] px-[10px] pr-[44px] font-medium text-[14px] leading-[17px] text-black/70 rounded-[10px] border border-black/20 bg-white text-left flex items-center justify-between cursor-pointer"
-              >
-                <span>{setorValue}</span>
-                <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="24" rx="12" fill="#0062DD" fillOpacity="0.05"/>
-                    <path d="M16 10L12 14L8 10" stroke="black" strokeOpacity="0.7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              </button>
-              {setorOpen && (
-                <div className="absolute top-[48px] left-0 w-full bg-white border border-black/20 rounded-[10px] shadow-md z-20">
-                  {setorOptions.map(opt => (
-                    <div
-                      key={opt}
-                      onClick={() => { setSetorValue(opt); setSetorOpen(false); }}
-                      className={`px-[10px] py-[10px] text-[14px] text-black/70 cursor-pointer rounded-[8px] ${setorValue === opt ? 'bg-gray-100' : 'bg-white'}`}
-                    >
-                      {opt}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <select value={sectorId} onChange={e => setSectorId(e.target.value)} className="w-full h-[44px] px-[10px] font-medium text-[14px] text-black/70 rounded-[10px] border border-black/20 bg-white">
+              <option value="">Selecione um setor</option>
+              {setores.map((sector, idx) => (
+                <option key={sector?.id || idx} value={sector?.id || ''}>{sector?.name || sector?.id || JSON.stringify(sector)}</option>
+              ))}
+            </select>
             <span className="form-description font-medium text-[14px] leading-[17px] text-black/70">O atendimento será transferido para este setor.</span>
           </div>
           {/* Mensagem */}
           <div className="flex flex-col gap-[5px] w-full">
             <label className="form-label font-semibold text-[14px] leading-[17px] text-black">Mensagem</label>
-            <textarea
-              ref={messageRef}
-              className="message-area resize-none w-full rounded-[10px] border border-black/20 p-[10px] text-[14px] font-medium text-black/70 h-[114px]"
-              placeholder="Escreva sua mensagem..."
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            ></textarea>
-            <div className="mt-2 text-[14px]">
-              <span className="font-semibold text-black">Preview:</span>
-              <div>{renderMessagePreview(message)}</div>
-            </div>
+            <textarea ref={messageRef} className="message-area resize-none w-full rounded-[10px] border border-black/20 p-[10px] text-[14px] font-medium text-black/70 h-[114px]" placeholder="Edite a mensagem..." value={message} onChange={e => setMessage(e.target.value)} style={{ fontFamily: 'Inter, sans-serif' }}></textarea>
           </div>
           {/* Variáveis */}
           <div className="variables-section w-full flex flex-col gap-2">
             <span className="variables-label font-medium text-[14px] text-black">Inserir variáveis:</span>
             <div className="variables-grid flex flex-wrap gap-2">
-              {variables.map((v) => (
-                <button
-                  type="button"
-                  key={v.value}
-                  className="variable-chip px-4 py-2 font-medium hover:bg-[#d2e0db] transition-colors bg-[#0B4D33]/10 rounded-full text-[#0B4D33] h-[37px] flex items-center justify-center"
-                  onClick={() => handleInsertVariable(v.value)}
-                >
+              {variables.map((v, idx) => (
+                <button type="button" key={v.value || idx} className="variable-chip px-4 py-2 font-medium hover:bg-[#d2e0db] transition-colors bg-[#0B4D33]/10 rounded-full text-[#0B4D33] h-[37px] flex items-center justify-center" onClick={() => handleInsertVariable(v.value)}>
                   {v.label}
                 </button>
               ))}
             </div>
           </div>
-          {/* Toggle */}
+          {/* Toggle Ativar notificação */}
           <div className="toggle-group flex flex-row items-center gap-2 mt-2 h-[19px]">
-            <button
-              type="button"
-              aria-pressed={isActive}
-              onClick={() => setIsActive((prev) => !prev)}
-              className="bg-none border-none p-0 cursor-pointer flex items-center gap-2"
-            >
+            <button type="button" aria-pressed={isActive} onClick={() => setIsActive((prev) => !prev)} className="bg-none border-none p-0 cursor-pointer flex items-center gap-2">
               <span className="toggle-label font-semibold text-[16px] leading-[19px] text-black mr-2">
                 Ativar notificação
               </span>

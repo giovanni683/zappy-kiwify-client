@@ -1,9 +1,8 @@
 "use client";
 
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-import { useState } from 'react';
 import { Header } from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import { FilterControls } from '@/components/notifications/FilterControls';
@@ -11,48 +10,60 @@ import { NotificationsList } from '@/components/notifications/NotificationsList'
 import { NotificationDetails } from '@/components/notifications/NotificationDetails';
 import { NewNotification } from '@/components/notifications/NewNotification';
 import { EditNotification } from '@/components/notifications/EditNotification';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import useNotificationStore from '@/lib/notification-store';
 
 type Tela = 'lista' | 'detalhes' | 'nova' | 'editar';
 
 export default function HomePage() {
+  const searchParams = useSearchParams();
+  const accountIdParam = searchParams?.get('accountId') || '';
   const {
-    searchTerm,
-    filterStatus,
+    setValidIntegrationIds,
+    accountId,
+    fetchAndSetAccountId,
+    buscarNotificacoesBackend,
     setSearchTerm,
     setFilterStatus,
     getFilteredNotifications,
-    buscarNotificacoesBackend,
+    searchTerm,
+    filterStatus,
   } = useNotificationStore();
   const filteredNotifications = getFilteredNotifications();
-
 
   const [tela, setTela] = useState<Tela>('lista');
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const isModalOpen = tela !== 'lista';
-
+  // Handlers
   const handleVerDetalhes = (id: string) => {
-  console.log('Ver detalhes:', id);
-  setSelectedId(id);
-  setTela('detalhes');
+    setSelectedId(id);
+    setTela('detalhes');
   };
-  const handleNova = () => {
-  console.log('Nova notificação');
-  setTela('nova');
-  };
+  const handleNova = () => setTela('nova');
   const handleEditar = (id: string) => {
-  console.log('Editar:', id);
-  setSelectedId(id);
-  setTela('editar');
+    setSelectedId(id);
+    setTela('editar');
   };
   const handleVoltar = () => {
-  console.log('Voltar para lista');
-  setTela('lista');
-  setSelectedId(null);
+    setTela('lista');
+    setSelectedId(null);
+    buscarNotificacoesBackend('', accountId);
   };
 
+  // Effects
+  useEffect(() => { fetchAndSetAccountId(); }, [fetchAndSetAccountId]);
+  useEffect(() => {
+    if (!accountId) return;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    fetch(`${baseUrl}/api/zappy/connections/active?accountId=${accountId}`)
+      .then(res => res.json())
+      .then(data => {
+        const arr = Array.isArray(data) ? data : (data.connections || data.items || data.data || []);
+        setValidIntegrationIds(arr.map((c: any) => String(c.id)));
+      });
+    buscarNotificacoesBackend('', accountId);
+  }, [accountId, setValidIntegrationIds, buscarNotificacoesBackend]);
+
+  // Render
   return (
     <div className="max-w-[420px] mx-auto bg-gray-50 min-h-screen">
       {tela === 'lista' && <Header />}
@@ -60,7 +71,7 @@ export default function HomePage() {
         {tela === 'lista' && (
           <>
             <div className="mb-6">
-              <h2 style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: '24px', fontWeight: 700, lineHeight: 'normal' }} className="mb-2">
+              <h2 className="mb-2" style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: '24px', fontWeight: 700, lineHeight: 'normal' }}>
                 Notificações
               </h2>
               <p style={{ color: 'rgba(0, 0, 0, 0.70)', fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: 500, lineHeight: 'normal' }}>
@@ -73,7 +84,7 @@ export default function HomePage() {
                 filterStatus={filterStatus}
                 onSearchChange={async (term) => {
                   setSearchTerm(term);
-                  await buscarNotificacoesBackend(term);
+                  await buscarNotificacoesBackend(term, accountId);
                 }}
                 onFilterChange={setFilterStatus}
               />
@@ -110,9 +121,7 @@ export default function HomePage() {
             onEdit={handleEditar}
           />
         )}
-        {tela === 'nova' && (
-          <NewNotification onBack={handleVoltar} />
-        )}
+        {tela === 'nova' && <NewNotification onBack={handleVoltar} />}
         {tela === 'editar' && selectedId && (
           <EditNotification notificationId={selectedId} onBack={handleVoltar} />
         )}

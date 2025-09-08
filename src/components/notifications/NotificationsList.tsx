@@ -17,7 +17,6 @@ export function NotificationsList({ notifications, onNotificationClick, onNotifi
       </div>
     );
   }
-
   return (
     <div className="space-y-3">
       {notifications.map((notification) => (

@@ -1,7 +1,6 @@
 import React from 'react';
 import { inter } from '@/app/layout';
 import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 
 interface SearchInputProps {
   value: string;
@@ -18,11 +17,11 @@ export function SearchInput({ value, onChange, placeholder = "Buscar..." }: Sear
       <span className="relative w-6 h-6 flex items-center justify-center">
         <Search style={{ width: 24, height: 24, stroke: 'rgba(0,0,0,0.7)', position: 'absolute', left: '12.5%', right: '12.5%', top: '1px', bottom: '0' }} />
       </span>
-      <Input
+      <input
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
-        placeholder={placeholder || "Buscar por nome"}
+        placeholder={placeholder}
         className={
           `${inter.className} font-medium text-[16px] leading-6 text-black/70 bg-transparent border-none outline-none w-[132px] h-6 p-0`
         }

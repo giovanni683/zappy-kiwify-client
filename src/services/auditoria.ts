@@ -1,4 +1,3 @@
-// ...existing code...
 export async function registrarAuditoria({ usuario, ticketId, acao, motivo }: {
   usuario: string;
   ticketId: string;

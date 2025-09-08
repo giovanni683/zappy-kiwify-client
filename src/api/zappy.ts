@@ -46,3 +46,18 @@ export async function listNotificationRules() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/zappy/notification-rules`);
   return res.json();
 }
+
+export async function listEvents() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/zappy/events`);
+  return res.json();
+}
+
+export async function listConnections() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/zappy/connections`);
+  return res.json();
+}
+
+export async function listSectors() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/zappy/queues`);
+  return res.json();
+}

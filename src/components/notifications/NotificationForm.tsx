@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,11 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { ConnectionAlert } from '@/components/notifications/connection-alert';
 import { VariableButtons } from '@/components/notifications/variable-buttons';
-import { mockEvents, mockConnections, mockSectors } from '@/lib/mock-data';
-import { Notification } from '@/types/notification';
+import { listEvents, listConnections, listSectors } from '@/api/zappy';
+import { Event, Connection, Sector, Notification } from '@/types/notification';
 
 interface NotificationFormProps {
-  initialData?: Partial<Notification>;
+  initialData?: Notification;
   onSubmit: (data: any) => void;
   submitLabel?: string;
 }
@@ -33,6 +33,15 @@ export function NotificationForm({
   });
 
   const [showConnectionAlert, setShowConnectionAlert] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [sectors, setSectors] = useState<Sector[]>([]);
+
+  useEffect(() => {
+    listEvents().then(setEvents);
+    listConnections().then(setConnections);
+    listSectors().then(setSectors);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +79,7 @@ export function NotificationForm({
     }
   };
 
-  const availableConnections = mockConnections.filter(conn => conn.isConnected);
+  const availableConnections = connections.filter(conn => conn.isConnected);
   const hasNoConnections = availableConnections.length === 0;
 
   return (
@@ -87,7 +96,7 @@ export function NotificationForm({
               <SelectValue placeholder="Selecione um evento" />
             </SelectTrigger>
             <SelectContent>
-              {mockEvents.map((event) => (
+              {events.map((event) => (
                 <SelectItem key={event.id} value={event.id}>
                   {event.name}
                 </SelectItem>
@@ -132,7 +141,7 @@ export function NotificationForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {mockSectors.map((sector) => (
+              {sectors.map((sector) => (
                 <SelectItem key={sector.id} value={sector.id}>
                   {sector.name}
                 </SelectItem>

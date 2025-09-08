@@ -1,10 +1,8 @@
-
 interface ConnectionAlertProps {
   type: 'warning' | 'no-connection';
 }
 
 export function ConnectionAlert({ type }: ConnectionAlertProps) {
-  // Padronização visual conforme NewNotification
   const baseStyle = {
     width: 388,
     margin: '0 auto',
